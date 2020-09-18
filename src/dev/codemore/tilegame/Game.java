@@ -6,8 +6,10 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.security.Key;
 
+import dev.codemore.tilegame.gfx.GameCamera;
 import javafx.scene.image.Image;
 import src.dev.codemore.tilegame.input.KeyManager;
+import src.dev.codemore.tilegame.input.MouseManager;
 
 public class Game implements Runnable {
 
@@ -24,14 +26,21 @@ public class Game implements Runnable {
     private Graphics g; 
 
     //States
-    private State gameState;
-    private State menuState;    
+    public State gameState;
+    public  State menuState;    
 
     // private BufferedImage test; 
     // private SpriteSheet sheet;
 
     //Input
     private KeyManager KeyManager;
+    private MouseManager mouseManager; 
+    
+    //Camera
+    private GameCamera gameCamera; 
+    
+    //Handler
+    private Handler handler; 
 
     
     public void tick(){
@@ -48,7 +57,7 @@ public class Game implements Runnable {
         this.width = width;
         this.title = title;
         KeyManager = new KeyManager(); 
-
+        mouseManager = new MouseManager(); 
         
     }
 
@@ -94,8 +103,23 @@ public class Game implements Runnable {
     public KeyManager getKeyManager(){
         return KeyManager; 
     }
+    
+    public MouseManager getMouseManager() {
+    	return mouseManager; 
+    }
 
     
+    public GameCamera getGameCamera() {
+    	return gameCamera; 
+    }
+    
+    public int getWidth() {
+    	return width; 
+    }
+
+    public int getHeight() {
+    	return height; 
+    }
 
 
     public void render(){
@@ -133,11 +157,21 @@ public class Game implements Runnable {
         display.getFrame().addKeyListener(KeyManager);
         // test = ImageLoader.loadImage("res/textures/sheet.png");
         // sheet = new SpriteSheet(test);
+        
+        display.getFrame().addMouseListener(mouseManager);
+        display.getFrame().addMouseMotionListener(mouseManager); 
+        display.getCanvas().addMouseListener(mouseManager);
+        display.getCanvas().addMouseMotionListener(mouseManager); 
+        
         Assets.init();
+        
+        handler = new Handler(this);
+        gameCamera = new GameCamera(handler,0,0); 
+         
 
-        gameState = new GameState(this);
-        menuState = new MenuState(this);
-        State.setState(gameState);
+        gameState = new GameState(handler);
+        menuState = new MenuState(handler);
+        State.setState(menuState);
 
        
     }

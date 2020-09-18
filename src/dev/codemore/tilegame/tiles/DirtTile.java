@@ -10,6 +10,6 @@ public class DirtTile extends Tile{
 
     @Override
     public boolean isSolid(){
-        return true; 
+        return false; 
     }
 }
